@@ -184,3 +184,64 @@ setter로 생성자 주입을 사용하면 다음처럼 주입 데이터를 누�
 
 생성자 주입을 사용하면 필드에 `final` 키워드를 사용할 수 있다. 그래서 생성자에서 혹시라도 값이 설정되지 않는 오류를 컴파일 시점에 막아준다. 다음 코드를 보자.
 - 기억하자! ****컴파일** **오류는** **세상에서** **가장** **빠르고**, **좋은** **오류다**!**
+## 롬복과 최신 트랜드
+막상 개발ㅇ르 해보면 대부분 불변이다. 생성자는 final 키워드를 사용
+그런데 생성자도 만들고 주입 받은 값을 대입하는 코드
+
+
+```java
+plugins {  
+    id 'java'  
+    id 'org.springframework.boot' version '3.4.2'  
+    id 'io.spring.dependency-management' version '1.1.7'  
+}  
+  
+group = 'hello'  
+version = '0.0.1-SNAPSHOT'  
+  
+java {  
+    toolchain {  
+       languageVersion = JavaLanguageVersion.of(21)  
+    }}  
+  
+//lombok 설정 추가 시작  
+configurations {  
+    compileOnly {  
+       extendsFrom annotationProcessor  
+    }  
+}  
+//lombok 설정 추가 끝  
+  
+repositories {  
+    mavenCentral()  
+}  
+  
+dependencies {  
+    implementation 'org.springframework.boot:spring-boot-starter'  
+  
+    //lombok 라이브러리 추가 시작  
+    compileOnly 'org.projectlombok:lombok'  
+    annotationProcessor 'org.projectlombok:lombok'  
+    testCompileOnly 'org.projectlombok:lombok'  
+    testAnnotationProcessor 'org.projectlombok:lombok'  
+//lombok 라이브러리 추가 끝  
+  
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'  
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'  
+}  
+  
+tasks.named('test') {  
+    useJUnitPlatform()  
+}
+```
+
+
+`@RequiredArgsConstructor` final 붙은 필드를 모아서 생성자를 자동으로 만들어줌
+
+## 조회 빈이 2개 이상 - 문제
+DiscountPolicy의 하위 타입인 FixDiscountPolicy, RateDiscountPolicy 둘다 스프링 빈으로 등록
+@component를 붙여준다.
+=> @Autowired로 인해서 NoUniqueBeanDefinitionException 오류가 발생
+하나의 빈을 기대했으나 두개의 빈이 발견
+
+하위 타입으로 지정하면 DIP 위배하고 유연성이 떨어진다. 
