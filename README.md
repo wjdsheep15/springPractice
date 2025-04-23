@@ -244,4 +244,71 @@ DiscountPolicy의 하위 타입인 FixDiscountPolicy, RateDiscountPolicy 둘다 
 => @Autowired로 인해서 NoUniqueBeanDefinitionException 오류가 발생
 하나의 빈을 기대했으나 두개의 빈이 발견
 
-하위 타입으로 지정하면 DIP 위배하고 유연성이 떨어진다. 
+하위 타입으로 지정하면 DIP 위배하고 유연성이 떨어진다.
+
+## @Autowired 필드 명 , @Quilifier, @Primar
+
+조회 대상 빈이 2개 이상일 때 해결 방법
+- @Autowired 필드 명 매칭
+- @Qualifier => @Qualifier 끼리 매칭 => 빈 이름 매칭
+- @Primary 사용
+
+@Autowired  필드 명 매칭
+```java
+@Autowired
+private DiscountPolicy rateDiscountPolicy
+```
+필드 명이 rateDiscountPolicy이므로 정상 주입
+
+@Autowired 매칭 정리
+- 타입 매칭
+- 타입 매칭의 결과가 2개 이상일 때 필드 명, 파라미터 명으로 빈 이름 매칭
+
+### @Qualifier 사용
+@Qualifier는 주입시 구분자 붙여주는 방식, 빈 이름을 변경하는 것이 아님
+```java
+@Component
+@Qualifier("mainDiscountPolicy")
+public class RateDiscountPolicy implements DiscountPolicy {}
+
+@Component
+@Qualifier("fixDiscountPolicy")
+public class FixDiscountPolicy implements DiscountPolicy {}
+```
+
+생성자 자동 주입 예시
+```java
+@Autowired
+public OrderServiceImple(MemberRepository memberRepository, @Qualifier("mainDiscountPolicy") DiscountPolicy discountPolicy) {
+	this.memberRepository = memberRepository;
+	this.discountPolicy = discountPolicy:
+}
+```
+@ Qualifier 정리
+- @Qualifier 끼리 매칭
+- 빈 이름 매칭
+- NoSuchBeanDefinitionException 예외 발생
+
+### @Primary  사용
+@Autowired 시에 여러 빈이 매칭되면 `@Primary` 가 우선권을 가진다.
+
+`rateDiscountPolicy` 가 우선권을 가지도록 하자.
+```java
+@Component
+@Primary
+public class RateDiscountPolicy implements DiscountPolicy {}
+
+@Component
+public class FixDiscountPolicy implements DiscountPolicy {}
+
+```
+
+**@Primary, @Qualifier **활용****
+@Primary 활용
+- 자주 사용하는 메인 데이터베이스의 커넥션
+
+@Qualifier 활용
+- 서브 데이터베이스
+
+****우선순위****
+`@Primary` < `@Qualifier`

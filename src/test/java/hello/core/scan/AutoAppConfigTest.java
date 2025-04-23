@@ -1,5 +1,6 @@
 package hello.core.scan;
 
+import hello.core.AppConfig;
 import hello.core.AutoAppConfig;
 import hello.core.member.MemberService;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ public class AutoAppConfigTest {
 
     @Test
     void basicScan() {
-        AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AutoAppConfig.class);
+        AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
 
         MemberService memberService = ac.getBean(MemberService.class);
         assertThat(memberService).isInstanceOf(MemberService.class);
