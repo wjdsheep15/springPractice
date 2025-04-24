@@ -1,6 +1,5 @@
 package hello.core.scan;
 
-import hello.core.AppConfig;
 import hello.core.AutoAppConfig;
 import hello.core.member.MemberService;
 import org.junit.jupiter.api.Test;
