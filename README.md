@@ -312,3 +312,44 @@ public class FixDiscountPolicy implements DiscountPolicy {}
 
 ****우선순위****
 `@Primary` < `@Qualifier`
+
+## 애노테이션 직접 만들기
+`@Qualifier("mainDiscountPolicy")` 문자로 적으면 컴파일시 타입 체크가 안된다. 따라서 컴파일시 타입 체크를 하기 위해 애노테이션을 만들어서 사용하면 된다.
+
+```java
+// 애노테이션 생성
+package hello.core.annotataion;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import java.lang.annotation.*;
+
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Qualifier("mainDiscountPolicy")
+public @interface MainDiscountPolicy {
+
+}
+
+// 애노테이션 적용
+@Component
+@MainDiscountPolicy
+public class RateDiscountPolicy implements DiscountPolicy {}
+
+//생성자 자동 주입
+
+@Autowired
+public OrderServiceImpl(MemberRepository memberRepository, @MainDiscountPolicy DiscountPolicy discountPolicy) {
+	this.memberRepository = memberRepository;
+	this.discountPolicy = discountPolicy;
+}
+
+//수정자 자동 주입
+@Autowired
+public DiscountPolicy setDiscountPolicy(@MainDiscountPolicy DiscountPolicy discountPolicy) {
+	this.discountPolicy = discountPolicy;
+}
+```
+
+- 애노테이션에는 상속이라는 개념이 없다.
+- @Qualifier 뿐만 아니라 다른 애노테이션들도 함께 조합해서 사용할 수 있다.
