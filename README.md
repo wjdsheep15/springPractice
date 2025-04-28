@@ -189,7 +189,7 @@ setter로 생성자 주입을 사용하면 다음처럼 주입 데이터를 누�
 그런데 생성자도 만들고 주입 받은 값을 대입하는 코드
 
 
-```java
+```gradle
 plugins {  
     id 'java'  
     id 'org.springframework.boot' version '3.4.2'  
@@ -256,7 +256,7 @@ DiscountPolicy의 하위 타입인 FixDiscountPolicy, RateDiscountPolicy 둘다 
 @Autowired  필드 명 매칭
 ```java
 @Autowired
-private DiscountPolicy rateDiscountPolicy
+private DiscountPolicy rateDiscountPolicy;
 ```
 필드 명이 rateDiscountPolicy이므로 정상 주입
 
@@ -281,7 +281,7 @@ public class FixDiscountPolicy implements DiscountPolicy {}
 @Autowired
 public OrderServiceImple(MemberRepository memberRepository, @Qualifier("mainDiscountPolicy") DiscountPolicy discountPolicy) {
 	this.memberRepository = memberRepository;
-	this.discountPolicy = discountPolicy:
+	this.discountPolicy = discountPolicy;
 }
 ```
 @ Qualifier 정리
